@@ -12,18 +12,6 @@ Route::get('/user', function (Request $request) {
 //posts
 Route::apiResource('/product', App\Http\Controllers\Api\ProductController::class);
 
-// use App\Http\Controllers\Api\ProductCategoryController;
-// use App\Http\Controllers\Api\ProductController;
-
-// Route::prefix('category')->group(function () {
-//     // Routes untuk ProductCategory
-//     Route::get('/category/product', [ProductCategoryController::class, 'index']);
-//     Route::post('/category/product', [ProductCategoryController::class, 'store']);
-//     Route::get('/category/product/{category}', [ProductCategoryController::class, 'show']);
-//     Route::put('/product/{category}', [ProductCategoryController::class, 'update']);
-//     Route::delete('/product/{category}', [ProductCategoryController::class, 'destroy']);
-// });
-
 
 Route::apiResource('/categoryproduct', App\Http\Controllers\Api\ProductCategoryController::class);
 

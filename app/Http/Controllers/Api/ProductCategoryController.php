@@ -13,7 +13,7 @@ class ProductCategoryController extends Controller
     public function index()
     {
         // Get all product categories
-        $categories = ProductCategory::latest()->paginate(5);
+        $categories = ProductCategory::latest()->get();
 
         // Return collection of product categories as a resource
         return new ProductCategoryResource(true, 'List Data Product Categories', $categories);
@@ -39,45 +39,6 @@ class ProductCategoryController extends Controller
         return new ProductCategoryResource(true, 'Data Product Category Berhasil Ditambahkan!', $category);
     }
 
-    public function show($id)
-    {
-        // Find product category by ID
-        $category = ProductCategory::find($id);
-
-        // Check if category exists
-        if (!$category) {
-            return response()->json(['error' => 'Category not found'], 404);
-        }
-
-        // Return product category as a resource
-        return new ProductCategoryResource(true, 'Detail Data Product Category!', $category);
-    }
-
-    public function update(Request $request, $id)
-    {
-        // Validate request input
-        $validator = Validator::make($request->all(), [
-            'product_category_name' => 'required|string|max:255|unique:product_categories,product_category_name,' . $id,
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        // Find product category by ID
-        $category = ProductCategory::find($id);
-        if (!$category) {
-            return response()->json(['error' => 'Category not found'], 404);
-        }
-
-        // Update product category
-        $category->update([
-            'product_category_name' => $request->product_category_name,
-        ]);
-
-        // Return response
-        return new ProductCategoryResource(true, 'Data Product Category Berhasil Diubah!', $category);
-    }
 
     public function destroy($id)
     {

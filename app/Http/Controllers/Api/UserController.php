@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
- 
+
                 // // Save the user instance
                 // /** @var \App\Models\User $user **/
 
@@ -32,7 +32,7 @@ class UserController extends Controller
             if (Auth::attempt($request->only('username', 'password'))) {
                 $user = Auth::user(); // Mengambil data user yang sedang login
                 
-                $user->api_token = Str::random(100); // Membuat API token baru
+                $user->api_token = Str::random(60); // Membuat API token baru
                 
                 // Save the user instance
                 /** @var \App\Models\User $user **/
@@ -61,7 +61,7 @@ class UserController extends Controller
             $validator = Validator::make($request->all(), [
                 'username' => 'required|string|max:255|unique:users,username',
                 'password' => 'required|string|min:6',
-                'role' => 'required|in:admin,user', // Sesuaikan role
+                'role' => 'required|in:admin,user', // Sesuaikan roleVYUF
             ]);
 
             if ($validator->fails()) {
