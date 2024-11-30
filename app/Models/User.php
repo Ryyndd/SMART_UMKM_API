@@ -3,9 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -17,20 +18,30 @@ class User extends Authenticatable
     
 
     protected $fillable = [
+        'image',
+        'name',
+        'email',
         'username',
         'password',
         'api_token',
         'role',
     ];
 
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($image) => url('/storage/user/' . $image), // Menambahkan URL ke image
+        );
+    }
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        // 'password' => 'hashed', // Uncomment if you're using password hashing in Laravel 8+
-    ];
+    // protected $hidden = [
+    //     'password',
+    //     'remember_token',
+    // ];
+
+    // protected $casts = [
+    //     'email_verified_at' => 'datetime',
+    //     // 'password' => 'hashed', // Uncomment if you're using password hashing in Laravel 8+
+    // ];
 
 }

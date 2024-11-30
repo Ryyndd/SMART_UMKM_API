@@ -9,11 +9,12 @@ use App\Http\Resources\UserResources;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 
                 // // Save the user instance
-                // /** @var \App\Models\User $user **/
+                /** @var \App\Models\User $user **/
 
 
 class UserController extends Controller
@@ -59,6 +60,10 @@ class UserController extends Controller
         try {
             // Validasi input
             $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'name' => 'required|string',
+                'phone' => 'required|numeric',
+                'email'=> 'required|string|email',
                 'username' => 'required|string|max:255|unique:users,username',
                 'password' => 'required|string|min:6',
                 'role' => 'required|in:admin,user', // Sesuaikan roleVYUF
@@ -72,11 +77,21 @@ class UserController extends Controller
                 ], 422);
             }
 
+            // Handle image upload
+            $image = $request->file('image');
+            $namaImage = Str::slug($request->input('username')) . '-' . time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/user', $namaImage, 'public');
+
+
             // Hash password
             $hashedPassword = Hash::make($request->password);
 
             // Buat user baru
             $user = User::create([
+                'image'=> $namaImage,
+                'name'=> $request->name,
+                'email'=> $request->email,
+                'phone' => $request->phone,
                 'username' => $request->username,
                 'password' => $hashedPassword,
                 'api_token' => Str::random(60),
@@ -87,16 +102,96 @@ class UserController extends Controller
                 'success' => true,
                 'message' => 'User berhasil ditambahkan!',
                 'data' => $user
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menambahkan user',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+                ], 201);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat menambahkan user',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
     }
 
+    public function show($id)
+    {
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'],404);
+        }
+
+        return new UserResources(true, 'Detail Data User!', $user);
+    }
+
+
+    public function update( Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'name'=> 'required',
+            'email'=> 'required',
+            'phone' => 'required',
+            'username' => 'required',
+            'password'=> 'required',
+            'role'=> 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $user = User::find($id);
+
+        if(! $user) {
+            return response()->json(['error'=> 'User not found'],404);
+        }
+
+        if($request->hasFile('image')){
+            $image = $request->file('image');
+            $namaImage = Str::slug($request->input('username')) . '-' . time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/user', $namaImage, 'public');
+            
+            $user->update([
+                'image' => $namaImage,
+                'name'=> $request->name,
+                'email'=> $request->email,
+                'phone'=> $request->phone,
+                'username'=> $request->username,
+                'password'=> $request->password,
+                'role'=> $request->role
+            ]);
+
+        } else {
+            $user->update([
+                'name'=> $request->name,
+                'email'=> $request->email,
+                'phone'=> $request->phone,
+                'username'=> $request->username,
+                'password'=> $request->password,
+                'role'=> $request->role
+            ]);
+        }
+
+        return new UserResources(true,'Data User Berhasil Diubah!' ,$user);
+
+    }
+
+
+    public function destroy($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'User not found'],404);
+        }
+        
+        if ($user->image){
+            Storage::delete('public/user/'. $user->image);
+        }
+
+        $user->delete();
+
+        return new UserResources(true, 'Data User Berhasil Dihapus!', null);
+    }
     /**
      * Get all users with pagination.
      */

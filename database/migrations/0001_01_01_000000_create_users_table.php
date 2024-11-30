@@ -11,6 +11,10 @@ return new class extends Migration
         // Create 'users' table
         Schema::create('users', function (Blueprint $table) {
             $table->id(); // Kolom ID sebagai primary key default
+            $table->string('image')->default('');
+            $table->string('name'); 
+            $table->string('email');
+            $table->string('phone');
             $table->string('username')->unique(); // Username unik
             $table->string('password'); // Hash password
             $table->string('api_token', 80)->nullable()->unique(); // API token

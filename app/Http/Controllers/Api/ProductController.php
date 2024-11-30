@@ -26,7 +26,7 @@ class ProductController extends Controller
     {
         // Validate request input
         $validator = Validator::make($request->all(), [
-            'product_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'product_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'product_title' => 'required',
             'product_price' => 'required|numeric',
             'description_product' => 'required|string',

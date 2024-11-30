@@ -8,19 +8,17 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class Product extends Model
 {
 
-    // Menentukan apakah kolom timestamps digunakan
     public $timestamps = true;
 
-    // Menentukan kolom primary key
-    protected $primaryKey = 'id_product';
+    // protected $primaryKey = 'id';
 
     // Kolom yang dapat diisi
     protected $fillable = [
-        'product_image',
-        'product_title',
-        'description_product',
-        'product_price',
-        'category_product',
+        'image',
+        'name',
+        'description',
+        'price',
+        'category',
     ];
 
     // Mengubah format kolom product_image untuk menambahkan URL

@@ -19,5 +19,7 @@ Route::post('/user/post', [UserController::class,'store']);
 
 Route::get('/user', [UserController::class,'allUser']);
 
-Route::post('/login', [UserController::class,'index']);
+Route::post('/auth/login', [UserController::class,'index']);
+
+Route::apiResource('/transaction', App\Http\Controllers\Api\TransactionController::class);
 
