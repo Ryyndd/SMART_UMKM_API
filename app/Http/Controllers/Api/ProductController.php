@@ -27,7 +27,7 @@ class ProductController extends Controller
         // Validate request input
         $validator = Validator::make($request->all(), [
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'title' => 'required',
+            'name' => 'required',
             'price' => 'required|numeric',
             'description' => 'required|string',
             'category' => 'required|string', // Validate category name
@@ -45,7 +45,7 @@ class ProductController extends Controller
         // Create product
         $product = Product::create([
             'image' => $namaImage,
-            'title' => $request->title,
+            'name' => $request->name,
             'description' => $request->descproduct,
             'price' => $request->price,
             'category' => $request->category, // Store the category name
@@ -72,7 +72,7 @@ class ProductController extends Controller
     {
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'title' => 'required',
+            'name' => 'required',
             'price' => 'required',
         ]);
 
@@ -90,13 +90,13 @@ class ProductController extends Controller
         // Proses pembaruan
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = Str::slug($request->input('title')) . '-' . time() . '.' . $image->getClientOriginalExtension();
+            $imageName = Str::slug($request->input('name')) . '-' . time() . '.' . $image->getClientOriginalExtension();
             $image->storeAs('public/product', $imageName, 'public');
 
             // Update produk dengan gambar baru
             $product->update([
                 'image' => $imageName,
-                'title' => $request->title,
+                'name' => $request->name,
                 'price' => $request->price,
                 'descriptiot' => $request->description,
                 'category' => $request->category,
@@ -104,7 +104,7 @@ class ProductController extends Controller
         } else {
             // Update produk tanpa gambar baru
             $product->update([
-                'title' => $request->title,
+                'name' => $request->name,
                 'price' => $request->price,
                 'description' => $request->description,
                 'category' => $request->category,
