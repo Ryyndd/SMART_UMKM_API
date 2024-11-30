@@ -26,11 +26,11 @@ class ProductController extends Controller
     {
         // Validate request input
         $validator = Validator::make($request->all(), [
-            'product_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'product_title' => 'required',
-            'product_price' => 'required|numeric',
-            'description_product' => 'required|string',
-            'category_product' => 'required|string', // Validate category name
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'title' => 'required',
+            'price' => 'required|numeric',
+            'description' => 'required|string',
+            'category' => 'required|string', // Validate category name
         ]);
 
         if ($validator->fails()) {
@@ -38,26 +38,26 @@ class ProductController extends Controller
         }
 
         // Handle image upload
-        $image = $request->file('product_image');
-        $namaImage = Str::slug($request->input('product_title')) . '-' . time() . '.' . $image->getClientOriginalExtension();
+        $image = $request->file('image');
+        $namaImage = Str::slug($request->input('title')) . '-' . time() . '.' . $image->getClientOriginalExtension();
         $image->storeAs('public/product', $namaImage, 'public');
 
         // Create product
         $product = Product::create([
-            'product_image' => $namaImage,
-            'product_title' => $request->product_title,
-            'description_product' => $request->description_product,
-            'product_price' => $request->product_price,
-            'category_product' => $request->category_product, // Store the category name
+            'image' => $namaImage,
+            'title' => $request->title,
+            'description' => $request->descproduct,
+            'price' => $request->price,
+            'category' => $request->category, // Store the category name
         ]);
 
         // Return response
         return new ProductResource(true, 'Data Product Berhasil Ditambahkan!', $product);
     }
 
-    public function show($id_product)
+    public function show($id)
     {
-        $product =  Product::find($id_product);
+        $product =  Product::find($id);
 
         if (!$product) {
             // Jika produk tidak ditemukan, kembalikan error 404
@@ -68,12 +68,12 @@ class ProductController extends Controller
         return new ProductResource(true, 'Detail Data Product!', $product);
     }
 
-    public function update(Request $request, $id_product)
+    public function update(Request $request, $id)
     {
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'product_title' => 'required',
-            'product_price' => 'required',
+            'title' => 'required',
+            'price' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -81,33 +81,33 @@ class ProductController extends Controller
         }
 
         // Cari produk berdasarkan id_product
-        $product = Product::find($id_product); // Pastikan menggunakan 'id_product'
+        $product = Product::find($id); // Pastikan menggunakan 'id_product'
 
         if (!$product) {
             return response()->json(['error' => 'Product not found'], 404);
         }
 
         // Proses pembaruan
-        if ($request->hasFile('product_image')) {
-            $image = $request->file('product_image');
-            $imageName = Str::slug($request->input('product_title')) . '-' . time() . '.' . $image->getClientOriginalExtension();
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = Str::slug($request->input('title')) . '-' . time() . '.' . $image->getClientOriginalExtension();
             $image->storeAs('public/product', $imageName, 'public');
 
             // Update produk dengan gambar baru
             $product->update([
-                'product_image' => $imageName,
-                'product_title' => $request->product_title,
-                'product_price' => $request->product_price,
-                'description_product' => $request->description_product,
-                'category_product' => $request->category_product,
+                'image' => $imageName,
+                'title' => $request->title,
+                'price' => $request->price,
+                'descriptiot' => $request->description,
+                'category' => $request->category,
             ]);
         } else {
             // Update produk tanpa gambar baru
             $product->update([
-                'product_title' => $request->product_title,
-                'product_price' => $request->product_price,
-                'description_product' => $request->description_product,
-                'category_product' => $request->category_product,
+                'title' => $request->title,
+                'price' => $request->price,
+                'description' => $request->description,
+                'category' => $request->category,
             ]);
         }
 
@@ -115,10 +115,10 @@ class ProductController extends Controller
     }
 
 
-    public function destroy($id_product)
+    public function destroy($id)
     {
         // Temukan produk berdasarkan id_product
-        $product =  Product::find($id_product);
+        $product =  Product::find($id);
 
         // Jika produk tidak ditemukan
         if (!$product) {
@@ -126,8 +126,8 @@ class ProductController extends Controller
         }
 
         // Menghapus gambar jika ada
-        if ($product->product_image) {
-            Storage::delete('public/product/' . $product->product_image);
+        if ($product->image) {
+            Storage::delete('public/product/' . $product->image);
         }
 
         // Hapus produk dari database
