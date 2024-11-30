@@ -199,7 +199,7 @@ class UserController extends Controller
     {
         try {
             // Ambil semua data user dengan paginasi
-            $users = User::latest()->paginate(5);
+            $users = User::latest()->get();
 
             return new UserResources(true, 'List data user', $users);
         } catch (\Exception $e) {
