@@ -46,7 +46,7 @@ class ProductController extends Controller
         $product = Product::create([
             'image' => $namaImage,
             'name' => $request->name,
-            'description' => $request->descproduct,
+            'description' => $request->description,
             'price' => $request->price,
             'category' => $request->category, // Store the category name
         ]);
@@ -98,7 +98,7 @@ class ProductController extends Controller
                 'image' => $imageName,
                 'name' => $request->name,
                 'price' => $request->price,
-                'descriptiot' => $request->description,
+                'descriptio' => $request->description,
                 'category' => $request->category,
             ]);
         } else {
