@@ -39,7 +39,7 @@ class ProductController extends Controller
 
         // Handle image upload
         $image = $request->file('image');
-        $namaImage = Str::slug($request->input('title')) . '-' . time() . '.' . $image->getClientOriginalExtension();
+        $namaImage = Str::slug($request->input('name')) . '-' . time() . '.' . $image->getClientOriginalExtension();
         $image->storeAs('public/product', $namaImage, 'public');
 
         // Create product
