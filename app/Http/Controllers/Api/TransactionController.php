@@ -13,6 +13,7 @@ class TransactionController extends Controller
 {
     //
    
+    
     public function index()
     {
         // Fetch transactions with related products
@@ -21,12 +22,12 @@ class TransactionController extends Controller
         // Format response data
         $data = $transactions->map(function ($transaction) {
             return [
-                'transaction_id' => $transaction->transaction_id,
-                'transaction_time' => $transaction->transaction_time,
-                'transaction_user' => $transaction->transaction_user,
-                'transaction_total' => $transaction->transaction_total,
-                'transaction_cashback' => $transaction->transaction_cashback,
-                'transaction_product' => $transaction->products->map(function ($product) {
+                'id' => $transaction->id, // Menggunakan 'id' sebagai primary key
+                'time' => $transaction->time,
+                'user' => $transaction->user,
+                'total' => $transaction->total,
+                'cashback' => $transaction->cashback,
+                'products' => $transaction->products->map(function ($product) {
                     return [
                         'name' => $product->name,
                         'price' => $product->price,
@@ -38,27 +39,22 @@ class TransactionController extends Controller
             ];
         });
 
-        return response()->json([
-            'success' => true,
-            'message' => 'List Data Transaction',
-            'data' => $data,
-        ]);
+        return new TransactionResource(true, 'List Data Transaction', $data);
     }
 
-    // Store transaction with products
     public function store(Request $request)
     {
         // Validate input
         $validator = Validator::make($request->all(), [
-            'transaction_id' => 'required|unique:transactions,transaction_id',
-            'transaction_time' => 'required',
-            'transaction_user' => 'required',
-            'transaction_total' => 'required|integer',
-            'transaction_cashback' => 'required|integer',
-            'transaction_product' => 'required|array',
-            'transaction_product.*.name' => 'required|string',
-            'transaction_product.*.price' => 'required|numeric',
-            'transaction_product.*.quantity' => 'required|integer',
+            'id' => 'required|unique:transactions,id', // Mengubah nama kolom menjadi 'id'
+            'time' => 'required|date', // Mengubah nama kolom menjadi 'time'
+            'user' => 'required|string', // Mengubah nama kolom menjadi 'user'
+            'total' => 'required|numeric', // Mengubah nama kolom menjadi 'total'
+            'cashback' => 'required|numeric', // Mengubah nama kolom menjadi 'cashback'
+            'products' => 'required|array', // Mengubah nama kolom menjadi 'products'
+            'products.*.name' => 'required|string',
+            'products.*.price' => 'required|numeric',
+            'products.*.quantity' => 'required|integer',
         ]);
 
         if ($validator->fails()) {
@@ -67,44 +63,49 @@ class TransactionController extends Controller
 
         // Create transaction
         $transaction = Transaction::create([
-            'transaction_id' => $request->transaction_id,
-            'transaction_time' => $request->transaction_time,
-            'transaction_user' => $request->transaction_user,
-            'transaction_total' => $request->transaction_total,
-            'transaction_cashback' => $request->transaction_cashback,
+            'id' => $request->id,
+            'time' => $request->time,
+            'user' => $request->user,
+            'total' => $request->total,
+            'cashback' => $request->cashback,
         ]);
 
         // Create transaction products
-        foreach ($request->transaction_product as $product) {
+        foreach ($request->products as $product) {
             TransactionProduct::create([
-                'transaction_product_id' => $transaction->transaction_id,
+                'transaction_id' => $transaction->id, // Menggunakan 'transaction_id' untuk relasi
                 'name' => $product['name'],
                 'price' => $product['price'],
                 'quantity' => $product['quantity'],
             ]);
         }
 
-        // Return response
-        return response()->json([
-            'success' => true,
-            'message' => 'Data Transaction Berhasil Ditambahkan!',
-            'data' => $transaction->load('products'),
-        ]);
+        return new TransactionResource(true, 'Data Transaction Berhasil Ditambahkan!', $transaction->load('products'));
     }
-    public function destroy($transaction_id)
+    
+    public function destroy($id)
     {
-        // Find product category by ID
-        $transaction = Transaction::find($transaction_id);
+        // Cari transaksi berdasarkan ID
+        $transaction = Transaction::find($id);
 
-        // Check if category exists
+        // Jika transaksi tidak ditemukan, kembalikan respons error
         if (!$transaction) {
-            return response()->json(['error' => 'Transaction not found'], 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Transaction not found.'
+            ], 404);
         }
 
-        // Delete product category
+        // Hapus produk terkait
+        $transaction->products()->delete();
+
+        // Hapus transaksi
         $transaction->delete();
 
-        // Return response
-        return new TransactionResource(true, 'Data Transaction Berhasil Dihapus!', null);
+        return response()->json([
+            'status' => true,
+            'message' => 'Transaction deleted successfully.',
+            'data' => null
+        ]);
     }
 }

@@ -17,9 +17,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('username')->unique(); // Username unik
             $table->string('password'); // Hash password
-            $table->string('api_token', 80)->nullable()->unique(); // API token
             $table->string('role'); // Role (admin atau user)
-            $table->rememberToken(); // Token untuk remember me
             $table->timestamps(); // Created_at dan updated_at
         });
         
@@ -45,8 +43,8 @@ return new class extends Migration
     public function down(): void
     {
         // Drop tables in reverse order to avoid foreign key issues
-        Schema::dropIfExists('sessions');
-        Schema::dropIfExists('password_reset_tokens');
+        // Schema::dropIfExists('sessions');
+        // Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('users');
     }
 };

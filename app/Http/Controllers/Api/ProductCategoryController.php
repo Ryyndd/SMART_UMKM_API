@@ -23,7 +23,7 @@ class ProductCategoryController extends Controller
     {
         // Validate request input
         $validator = Validator::make($request->all(), [
-            'product_category_name' => 'required|string|max:255|unique:product_categories,product_category_name',
+            'name' => 'required|string|max:255|unique:product_categories,name',
         ]);
 
         if ($validator->fails()) {
@@ -32,7 +32,7 @@ class ProductCategoryController extends Controller
 
         // Create product category
         $category = ProductCategory::create([
-            'product_category_name' => $request->product_category_name
+            'name' => $request->name
         ]);
 
         // Return response
