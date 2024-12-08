@@ -12,10 +12,10 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->string('id')->primary(); // Mengubah nama kolom menjadi 'id'
-            $table->timestamp('time'); // Mengubah nama kolom menjadi 'time'
+            $table->string('time'); // Mengubah nama kolom menjadi 'time'
             $table->string('user'); // Mengubah nama kolom menjadi 'user'
-            $table->decimal('total', 10, 2); // Mengubah nama kolom menjadi 'total'
-            $table->decimal('cashback', 10, 2); // Mengubah nama kolom menjadi 'cashback'
+            $table->string('total'); // Mengubah nama kolom menjadi 'total'
+            $table->string('cashback'); // Mengubah nama kolom menjadi 'cashback'
             $table->timestamps();
         });
     }

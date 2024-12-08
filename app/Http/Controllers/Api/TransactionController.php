@@ -47,13 +47,13 @@ class TransactionController extends Controller
         // Validate input
         $validator = Validator::make($request->all(), [
             'id' => 'required|unique:transactions,id', // Mengubah nama kolom menjadi 'id'
-            'time' => 'required|date', // Mengubah nama kolom menjadi 'time'
+            'time' => 'required', // Mengubah nama kolom menjadi 'time'
             'user' => 'required|string', // Mengubah nama kolom menjadi 'user'
-            'total' => 'required|numeric', // Mengubah nama kolom menjadi 'total'
-            'cashback' => 'required|numeric', // Mengubah nama kolom menjadi 'cashback'
+            'total' => 'required', // Mengubah nama kolom menjadi 'total'
+            'cashback' => 'required', // Mengubah nama kolom menjadi 'cashback'
             'products' => 'required|array', // Mengubah nama kolom menjadi 'products'
             'products.*.name' => 'required|string',
-            'products.*.price' => 'required|numeric',
+            'products.*.price' => 'required',
             'products.*.quantity' => 'required|integer',
         ]);
 

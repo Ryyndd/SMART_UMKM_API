@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('transaction_id'); // Tetap menggunakan 'transaction_id' untuk relasi
             $table->string('name');
-            $table->decimal('price', 10, 2); // Menggunakan decimal untuk harga
+            $table->string('price'); // Menggunakan decimal untuk harga
             $table->integer('quantity');
             $table->timestamps();
         
