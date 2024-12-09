@@ -15,5 +15,7 @@ Route::apiResource('/user', App\Http\Controllers\Api\UserController::class);
 
 Route::post('/auth/login', [UserController::class,'login']);
 
+Route::get('/user/username/{username}', [UserController::class,'getUserByUsername']);
+
 Route::apiResource('/transaction', App\Http\Controllers\Api\TransactionController::class);
 

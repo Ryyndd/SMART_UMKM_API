@@ -141,7 +141,18 @@ class UserController extends Controller
 
         return new UserResources(true, 'Detail Data User!', $user);
     }
+    
+    public function getUserByUsername($username)
+    {
+        $user = User::where('username', $username)->first();
 
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        return new UserResources(true, 'Username Data User!', $user);
+    }
+    
     public function update( Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -168,7 +179,7 @@ class UserController extends Controller
             if ($user->image){
                 $imagePath = parse_url($user->image, PHP_URL_PATH); // Get the path from the URL
                 
-                $relativePath = str_replace('/storage/user/', '/user/', $imagePath); // Adjust the path
+                $relativePath = str_replace('public/storage/user/', '/user/', $imagePath); // Adjust the path
 
                 // Check if the file exists and delete it
                 if (Storage::disk('public')->exists($relativePath)) {
@@ -219,7 +230,7 @@ class UserController extends Controller
             $imagePath = parse_url($user->image, PHP_URL_PATH); // Get the path from the URL
             
             // Remove the extra 'product/' segment if it exists
-            $relativePath = str_replace('/storage/user/', '/user/', $imagePath); // Adjust the path
+            $relativePath = str_replace('public/storage/user/', '/user/', $imagePath); // Adjust the path
 
             // Check if the file exists and delete it
             if (Storage::disk('public')->exists($relativePath)) {

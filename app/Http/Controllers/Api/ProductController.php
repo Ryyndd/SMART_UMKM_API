@@ -99,7 +99,7 @@ class ProductController extends Controller
                 $imagePath = parse_url($product->image, PHP_URL_PATH); // Get the path from the URL
                 
                 // Remove the extra 'product/' segment if it exists
-                $relativePath = str_replace('/storage/product/', '/product/', $imagePath); // Adjust the path
+                $relativePath = str_replace('public/storage/product/', '/product/', $imagePath); // Adjust the path
 
                 // Check if the file exists and delete it
                 if (Storage::disk('public')->exists($relativePath)) {
@@ -152,7 +152,7 @@ class ProductController extends Controller
                 $imagePath = parse_url($product->image, PHP_URL_PATH); // Get the path from the URL
                 
                 // Remove the extra 'product/' segment if it exists
-                $relativePath = str_replace('/storage/product/', '/product/', $imagePath); // Adjust the path
+                $relativePath = str_replace('public/storage/product/', '/product/', $imagePath); // Adjust the path
 
                 // Check if the file exists and delete it
                 if (Storage::disk('public')->exists($relativePath)) {
@@ -166,7 +166,7 @@ class ProductController extends Controller
             $product->delete();
 
             return new ProductResource(true, 'Data Product Berhasil Dihapus!', null);
-        }
+    }
 
 
 }
