@@ -41,6 +41,24 @@ class TransactionController extends Controller
 
         return new TransactionResource(true, 'List Data Transaction', $data);
     }
+    
+     public function getDataByUser(Request $request)
+        {
+        
+            $query = $request->input('query');
+    
+            $transactions = Transaction::with('products')
+                ->when($query, function ($queryBuilder) use ($query) {
+                    return $queryBuilder->whereDate('time', $query)
+                                        ->orWhere('user', 'like', "%{$query}%");
+                })
+                ->latest()
+                ->get();
+        
+            $message = $query ? "Berikut Data Hasil pencarian dari $query" : 'List data Transaction';
+        
+            return new TransactionResource(true, $message, $transactions);
+        }
 
     public function store(Request $request)
     {

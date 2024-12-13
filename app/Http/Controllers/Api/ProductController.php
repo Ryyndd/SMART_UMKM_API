@@ -14,13 +14,29 @@ use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     // Get all products
+    //     $product = Product::latest()->get();
+    //     // Return collection of products as a resource
+    //     return new ProductResource(true, 'List Data Products', $product);
+    // }
+    
+    
+    public function index(Request $request)
     {
-        // Get all products
-        $product = Product::latest()->get();
-        // Return collection of products as a resource
-        return new ProductResource(true, 'List Data Products', $product);
+        $query = $request->input('query');
+    
+        $products = Product::when($query, function ($queryBuilder) use ($query) {
+            return $queryBuilder->where('name', 'like', "%{$query}%")
+                                ->orWhere('category', 'like', "%{$query}%");
+        })->latest()->get();
+    
+        $message = $query ? "Berikut Data Hasil pencarian dari $query" : 'List data Product';
+    
+        return new ProductResource(true, $message, $products);
     }
+    
 
     public function store(Request $request)
     {

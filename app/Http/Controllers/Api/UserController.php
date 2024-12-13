@@ -55,9 +55,18 @@ class UserController extends Controller
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
-
+        
+        
         // Mencari pengguna berdasarkan username
         $user = User::where('username', $request->username)->first();
+        
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Username atau Password Tidak Ditemukan!',
+                'data' => null
+            ]);
+        }
 
         // Memeriksa apakah pengguna ditemukan dan passwordnya cocok
         if ($user->password == $request->password) {
@@ -76,14 +85,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function index()
+    
+    public function index(Request $request)
     {
-            // Ambil semua data user dengan paginasi
-            $users = User::latest()->get();
-        
-            return new UserResources(true, 'List data user', $users);
+        $query = $request->input('query');
+    
+        $users = User::when($query, function ($queryBuilder) use ($query) {
+            return $queryBuilder->where('username', 'like', "%{$query}%")
+                                ->orWhere('name', 'like', "%{$query}%");
+        })->latest()->get();
+    
+        $message = $query ? "Berikut Data Hasil pencarian dari $query" : 'List data user';
+    
+        return new UserResources(true, $message, $users);
     }
-
+    
     /**
      * Create a new user.
      */
